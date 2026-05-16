@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "unity-render-event-analysis",
-      "source": "./plugins/unity-render-event-analysis",
+      "source": "./Plugins/unity-render-event-analysis",
       "description": "Analyze Unity Editor per-frame draw-call data. Capture shader/pass/keyword info, extract pass metadata via ShaderUtil.GetShaderData, build custom shader variant collectors. Uses FrameDebugger reflection — no InternalAPIEditorBridge needed.",
       "description_zh": "分析 Unity Editor 逐帧渲染指令数据。捕获 shader/pass/keyword 信息，通过 ShaderUtil.GetShaderData 提取 pass 元数据，构建自定义 shader variant 收集器。使用反射访问 FrameDebugger，无需 InternalAPIEditorBridge。",
       "version": "1.0.0"

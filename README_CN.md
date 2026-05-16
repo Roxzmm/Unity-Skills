@@ -6,7 +6,7 @@ Unity 游戏开发的 Claude Code 技能合集。
 
 | 插件 | 说明 | 安装 |
 |---|---|---|
-| [unity-render-event-analysis](plugins/unity-render-event-analysis/) | 通过 FrameDebugger 反射逐帧分析渲染数据 — 着色器、Pass、关键字 | `/plugin install unity-render-event-analysis@Unity-Skills` |
+| [unity-render-event-analysis](Plugins/unity-render-event-analysis/) | 通过 FrameDebugger 反射逐帧分析渲染数据 — 着色器、Pass、关键字 | `/plugin install unity-render-event-analysis@Unity-Skills` |
 
 ## 安装方法
 

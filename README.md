@@ -6,7 +6,7 @@ A collection of Claude Code skills for Unity game development.
 
 | Plugin | Description | Install |
 |---|---|---|
-| [unity-render-event-analysis](plugins/unity-render-event-analysis/) | Analyze per-frame draw-call data — shaders, passes, keywords via FrameDebugger reflection | `/plugin install unity-render-event-analysis@Unity-Skills` |
+| [unity-render-event-analysis](Plugins/unity-render-event-analysis/) | Analyze per-frame draw-call data — shaders, passes, keywords via FrameDebugger reflection | `/plugin install unity-render-event-analysis@Unity-Skills` |
 
 ## Installation
 
