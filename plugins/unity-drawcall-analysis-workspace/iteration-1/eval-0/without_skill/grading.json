@@ -1,0 +1,58 @@
+{
+  "expectations": [
+    {
+      "text": "Code resolves FrameDebuggerUtility and FrameDebuggerEventData types via Assembly.GetType in static constructor",
+      "passed": true,
+      "evidence": "Lines 213-216: s_UtilType = editorAssembly.GetType(\"UnityEditorInternal.FrameDebuggerInternal.FrameDebuggerUtility\"); s_EventDataType = editorAssembly.GetType(\"UnityEditorInternal.FrameDebuggerInternal.FrameDebuggerEventData\"); \u2014 both resolved via Assembly.GetType inside the static constructor (lines 207-313)."
+    },
+    {
+      "text": "Uses Delegate.CreateDelegate for static method/property access (not MethodInfo.Invoke for simple methods)",
+      "passed": true,
+      "evidence": "Lines 235-249: All static methods (SetEnabled, GetRemotePlayerGUID, GetFrameEvents, GetFrameEventInfoName, GetFrameEventObject) and properties (count, limit) use CreateStaticDelegate/CreatePropertyGetter/CreatePropertySetter, which internally call Delegate.CreateDelegate (see lines 879-941). MethodInfo.Invoke is only used for GetFrameEventData (line 251-254 comment: \"internal param type \u2014 must use MethodInfo.Invoke\")."
+    },
+    {
+      "text": "Contains SetEnabled(bool, int) method wrapping the FrameDebuggerUtility.SetEnabled call",
+      "passed": true,
+      "evidence": "Lines 322-325: public static void SetEnabled(bool enable, int guid) { s_SetEnabled?.Invoke(enable, guid); } \u2014 wraps the delegate bound to FrameDebuggerUtility.SetEnabled."
+    },
+    {
+      "text": "Contains StartCapture with EditorApplication.update-based async capture loop",
+      "passed": true,
+      "evidence": "Lines 806-873: public static void StartCapture(Action<List<FrameDebuggerRawEvent>> onDone) { ... void Tick() { ... } EditorApplication.update += Tick; } \u2014 uses EditorApplication.update for async per-frame capture of all events."
+    },
+    {
+      "text": "Extracts shaderName/passName/passIndex/shaderKeywords from FrameDebuggerEventData via reflection field accessors",
+      "passed": true,
+      "evidence": "Lines 469-519: GetOriginalShaderName (line 469-472) extracts shaderName, GetPassName (481-484) extracts passName, GetShaderPassIndex (509-514) extracts passIndex, GetShaderKeywords (517-520) extracts shaderKeywords \u2014 all via FieldInfo.GetValue on FrameDebuggerEventData instance fields."
+    },
+    {
+      "text": "FrameDebuggerRawEvent data class includes index, shaderName, passIndex, passName, lightMode, shaderKeywords fields",
+      "passed": true,
+      "evidence": "Lines 14-78: FrameDebuggerRawEvent class contains public int index (line 17), public string shaderName (27), public int passIndex (38), public string passName (41), public string lightMode (44), public string shaderKeywords (50) \u2014 all six fields present."
+    },
+    {
+      "text": "Uses null-conditional operators (?.) or explicit null checks on reflection delegates/field accessors",
+      "passed": true,
+      "evidence": "Line 324: s_SetEnabled?.Invoke(enable, guid); \u2014 null-conditional operator. Line 389: s_GetFrameEvents?.Invoke(); \u2014 null-conditional. Line 471: s_FI_OriginalShaderName?.GetValue(data) as string ?? string.Empty; \u2014 null-conditional. Line 511: if (data == null || s_FI_ShaderPassIndex == null) return -1; \u2014 explicit null checks. These patterns appear consistently throughout the file."
+    },
+    {
+      "text": "Uses Activator.CreateInstance with 'true' parameter for internal type construction",
+      "passed": true,
+      "evidence": "Line 456: return Activator.CreateInstance(s_EventDataType, nonPublic: true); \u2014 uses Activator.CreateInstance with nonPublic: true to construct the internal FrameDebuggerEventData type."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "executor_duration_seconds": 117.3
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "All 8 expectations are met with clear, direct evidence in the output. The code demonstrates proper reflection-based FrameDebugger access using Assembly.GetType, Delegate.CreateDelegate for static members, EditorApplication.update-based async capture, field-level extraction of shader/pass/keyword data, and proper null safety. The implementation is thorough and well-structured."
+  }
+}

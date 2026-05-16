@@ -1,0 +1,58 @@
+{
+  "expectations": [
+    {
+      "text": "Has [MenuItem] attribute on the start method",
+      "passed": true,
+      "evidence": "Line 53: `[MenuItem(\"Tools/Frame Debugger/Capture All Events\")]` on `public static void StartCapture()`"
+    },
+    {
+      "text": "Uses EditorApplication.update as the capture loop tick mechanism",
+      "passed": true,
+      "evidence": "Line 83: `EditorApplication.update += CaptureTick;` subscribes the handler; Line 268: `EditorApplication.update -= CaptureTick;` removes it in Cleanup"
+    },
+    {
+      "text": "Sets FrameDebuggerReflect.SetLimit per event iteration (limit = targetIndex + 1 pattern)",
+      "passed": true,
+      "evidence": "Line 147: `FrameDebuggerReflect.SetLimit(1);` (initial limit); Line 219: `FrameDebuggerReflect.SetLimit(_targetIndex + 1);` (per-iteration next-limit pattern)"
+    },
+    {
+      "text": "Has three distinct phases in the update loop: wait for events, iterate with limit, cleanup on completion",
+      "passed": true,
+      "evidence": "Lines 25-33: `Phase` enum with `WaitingForEvents`, `Capturing`, `Done`; Lines 97-109: switch statement dispatching to `TickWaitForEvents()`, `TickCaptureEvent()`, and `Cleanup()`"
+    },
+    {
+      "text": "Writes CSV output with headers including shaderName/passName/lightMode/passIndex/shaderKeywords columns",
+      "passed": true,
+      "evidence": "Lines 142-144: header string `\"Index,EventName,ShaderName,PassName,LightMode,PassIndex,SubShaderIndex,ShaderKeywords,HasData\"`"
+    },
+    {
+      "text": "Removes EditorApplication.update handler and disables FrameDebugger in completion/cleanup path",
+      "passed": true,
+      "evidence": "Lines 267-281: `Cleanup()` removes delegate (`EditorApplication.update -= CaptureTick`) and disables FrameDebugger (`FrameDebuggerReflect.SetEnabled(false, ...)`)"
+    },
+    {
+      "text": "Has proper CSV escaping for special characters (commas, quotes, newlines)",
+      "passed": true,
+      "evidence": "Lines 311-322: `CsvEscape()` implements RFC 4180 quoting for commas, double-quotes, `\\n`, `\\r`; Line 327: `SpecialCsvChars = { ',', '\"', '\\n', '\\r' }`"
+    },
+    {
+      "text": "Calls RepaintAllViews or equivalent when event count is 0 to trigger event population",
+      "passed": true,
+      "evidence": "Line 133: `InternalEditorUtility.RepaintAllViews();` inside `TickWaitForEvents()` when `_eventCount <= 0`"
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "executor_duration_seconds": 53.8
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "All 8 expectations are fully met. The generated code is well-structured with a clean three-phase state machine, proper CSV escaping per RFC 4180, correct use of EditorApplication.update for the capture loop, and thorough cleanup logic."
+  }
+}

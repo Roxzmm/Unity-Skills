@@ -1,6 +1,7 @@
 {
-  "name": "unity-drawcall-analysis",
+  "name": "unity-render-event-analysis",
   "description": "Analyze Unity Editor per-frame draw-call data: capture shader/pass/keyword info, extract pass metadata via ShaderUtil.GetShaderData, build custom shader variant collectors without InternalAPIEditorBridge dependency",
+  "description_zh": "分析 Unity Editor 逐帧渲染指令数据：通过反射封装 FrameDebugger 捕获每帧所有 drawcall 的 shader/pass/keyword 信息，使用 ShaderUtil.GetShaderData 提取 pass 元数据，构建自定义的 shader variant 收集器。无需依赖 InternalAPIEditorBridge。",
   "version": "1.0.0",
   "author": {
     "name": "Roxzmm"

@@ -1,0 +1,58 @@
+{
+  "expectations": [
+    {
+      "text": "Code resolves FrameDebuggerUtility and FrameDebuggerEventData types via Assembly.GetType in static constructor",
+      "passed": true,
+      "evidence": "FrameDebuggerReflect.cs lines 123-128 in the static constructor: _tUtil = editorAsm.GetType(\"UnityEditorInternal.FrameDebuggerInternal.FrameDebuggerUtility\"); _tEventData = editorAsm.GetType(\"UnityEditorInternal.FrameDebuggerInternal.FrameDebuggerEventData\");"
+    },
+    {
+      "text": "Uses Delegate.CreateDelegate for static method/property access (not MethodInfo.Invoke for simple methods)",
+      "passed": true,
+      "evidence": "FrameDebuggerReflect.cs lines 160-174: _setEnabled/_getRemoteGUID/_getFrameEvents/_getEventInfoName/_getEventObject all created via CreateStaticDelegate which calls Delegate.CreateDelegate at line 683. Property getters/setters (_getCount/_getLimit/_setLimit) use CreatePropertyGetter/CreatePropertySetter, also backed by Delegate.CreateDelegate at lines 709/735. Comment at lines 12-14 explicitly states the design goal."
+    },
+    {
+      "text": "Contains SetEnabled(bool, int) method wrapping the FrameDebuggerUtility.SetEnabled call",
+      "passed": true,
+      "evidence": "FrameDebuggerReflect.cs lines 231-239: public static void SetEnabled(bool enable, int guid) { ... _setEnabled(enable, guid); }"
+    },
+    {
+      "text": "Contains StartCapture with EditorApplication.update-based async capture loop",
+      "passed": true,
+      "evidence": "FrameDebuggerReflect.cs lines 570-653: StartCapture method defines a local function Tick() at line 584, subscribes at line 652 (EditorApplication.update += Tick), and unsubscribes at line 641 (EditorApplication.update -= Tick) upon completion."
+    },
+    {
+      "text": "Extracts shaderName/passName/passIndex/shaderKeywords from FrameDebuggerEventData via reflection field accessors",
+      "passed": true,
+      "evidence": "FrameDebuggerReflect.cs lines 183-189: FieldInfo resolution for m_OriginalShaderName, m_PassName, m_ShaderPassIndex, shaderKeywords. Lines 366-401: GetOriginalShaderName, GetPassName, GetShaderPassIndex, GetShaderKeywords methods use fi?.GetValue(data). Lines 516-525 in CaptureRawEvent populate shaderName, passIndex, passName, shaderKeywords from these getters."
+    },
+    {
+      "text": "FrameDebuggerRawEvent data class includes index, shaderName, passIndex, passName, lightMode, shaderKeywords fields",
+      "passed": true,
+      "evidence": "FrameDebuggerRawEvent.cs lines 12 (index), 17 (shaderName), 23 (passIndex), 25 (passName), 26 (lightMode), 29 (shaderKeywords)."
+    },
+    {
+      "text": "Uses null-conditional operators (?.) or explicit null checks on reflection delegates/field accessors",
+      "passed": true,
+      "evidence": "Multiple instances throughout FrameDebuggerReflect.cs: line 243 (_getRemoteGUID != null ternary check), line 272 (_getFrameEvents?.Invoke()), line 282 (_getEventObject?.Invoke()), line 368 (_fiOriginalShaderName?.GetValue(data)), line 388 (if (_fiShaderInstanceID == null || data == null) return 0), line 411 (_fiMesh?.GetValue(data)), and many more."
+    },
+    {
+      "text": "Uses Activator.CreateInstance with 'true' parameter for internal type construction",
+      "passed": true,
+      "evidence": "FrameDebuggerReflect.cs lines 326-328: return Activator.CreateInstance(_tEventData, true); The 'true' parameter enables non-public type construction."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "executor_duration_seconds": 113.1
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "All 8 expectations are objectively and unambiguously satisfied by the code in FrameDebuggerReflect.cs and FrameDebuggerRawEvent.cs. The implementation is thorough, well-structured with clear separation of concerns, uses Delegate.CreateDelegate for performance, handles null safety consistently, and follows the expected patterns for reflection-based internal API access."
+  }
+}

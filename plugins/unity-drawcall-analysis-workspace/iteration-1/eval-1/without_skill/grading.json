@@ -1,0 +1,58 @@
+{
+  "expectations": [
+    {
+      "text": "Has [MenuItem] attribute on the start method",
+      "passed": true,
+      "evidence": "Line 26: [MenuItem(\"Tools/Frame Debugger/Capture All Events\")] on the entry point CaptureAllEvents()"
+    },
+    {
+      "text": "Uses EditorApplication.update as the capture loop tick mechanism",
+      "passed": true,
+      "evidence": "Lines 48-49: EditorApplication.update -= CaptureLoopTick; EditorApplication.update += CaptureLoopTick; and line 54: private static void CaptureLoopTick() defines the callback"
+    },
+    {
+      "text": "Sets FrameDebuggerReflect.SetLimit per event iteration (limit = targetIndex + 1 pattern)",
+      "passed": true,
+      "evidence": "Line 78: FrameDebuggerReflect.SetLimit(1) initializes to 1 (index 0 + 1); Line 94: FrameDebuggerReflect.SetLimit(_currentCaptureIndex + 1) per-event advance"
+    },
+    {
+      "text": "Has three distinct phases in the update loop: wait for events, iterate with limit, cleanup on completion",
+      "passed": true,
+      "evidence": "CaptureLoopTick() lines 57-79 Phase 1 (initialize/wait with RepaintAllViews when count is 0), lines 82-83 Phase 2 (CaptureCurrentEvent), lines 85-95 Phase 3 (advance or FinishCapture). FinishCapture lines 147-168 provides the cleanup path."
+    },
+    {
+      "text": "Writes CSV output with headers including shaderName/passName/lightMode/passIndex/shaderKeywords columns",
+      "passed": true,
+      "evidence": "Line 74: _csv.AppendLine(\"index,shaderName,passName,lightMode,passIndex,shaderKeywords\") includes all required columns"
+    },
+    {
+      "text": "Removes EditorApplication.update handler and disables FrameDebugger in completion/cleanup path",
+      "passed": true,
+      "evidence": "FinishCapture() lines 149: EditorApplication.update -= CaptureLoopTick; line 153: FrameDebuggerReflect.SetEnabled(false, guid)"
+    },
+    {
+      "text": "Has proper CSV escaping for special characters (commas, quotes, newlines)",
+      "passed": true,
+      "evidence": "CsvEscape() lines 175-184: checks for comma, double-quote, newline, carriage return; wraps in quotes if found; doubles embedded double-quotes via value.Replace(\"\\\"\", \"\\\"\\\"\")"
+    },
+    {
+      "text": "Calls RepaintAllViews or equivalent when event count is 0 to trigger event population",
+      "passed": true,
+      "evidence": "Lines 64-69: when _totalEventCount <= 0, calls InternalEditorUtility.RepaintAllViews() and returns early"
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "executor_duration_seconds": 93.7
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "All 8 expectations passed. The implementation is complete and well-structured with a clean three-phase update loop, proper CSV escaping, full cleanup on completion, and correct FrameDebugger integration."
+  }
+}

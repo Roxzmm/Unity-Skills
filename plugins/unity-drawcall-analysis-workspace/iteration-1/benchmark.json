@@ -1,0 +1,101 @@
+{
+  "benchmark_name": "unity-drawcall-analysis",
+  "generated_at": "2026-05-16T00:00:00Z",
+  "iterations": [
+    {
+      "iteration": 1,
+      "configs": [
+        {
+          "name": "with_skill",
+          "display_name": "With Skill",
+          "results": [
+            {
+              "eval_id": 0,
+              "eval_name": "reflection-wrapper",
+              "passed": 8,
+              "failed": 0,
+              "total": 8,
+              "pass_rate": 1.0,
+              "timing_seconds": 113.1,
+              "total_tokens": 72669
+            },
+            {
+              "eval_id": 1,
+              "eval_name": "capture-test-script",
+              "passed": 8,
+              "failed": 0,
+              "total": 8,
+              "pass_rate": 1.0,
+              "timing_seconds": 53.8,
+              "total_tokens": 58599
+            },
+            {
+              "eval_id": 2,
+              "eval_name": "variant-recorder",
+              "passed": 5,
+              "failed": 3,
+              "total": 8,
+              "pass_rate": 0.625,
+              "timing_seconds": 401.1,
+              "total_tokens": 83104
+            }
+          ],
+          "summary": {
+            "total_passed": 21,
+            "total_failed": 3,
+            "total_assertions": 24,
+            "pass_rate": 0.875,
+            "avg_timing_seconds": 189.3,
+            "total_timing_seconds": 568.0,
+            "total_tokens": 214372
+          }
+        },
+        {
+          "name": "without_skill",
+          "display_name": "Without Skill (Baseline)",
+          "results": [
+            {
+              "eval_id": 0,
+              "eval_name": "reflection-wrapper",
+              "passed": 8,
+              "failed": 0,
+              "total": 8,
+              "pass_rate": 1.0,
+              "timing_seconds": 117.3,
+              "total_tokens": 73439
+            },
+            {
+              "eval_id": 1,
+              "eval_name": "capture-test-script",
+              "passed": 8,
+              "failed": 0,
+              "total": 8,
+              "pass_rate": 1.0,
+              "timing_seconds": 93.7,
+              "total_tokens": 59338
+            },
+            {
+              "eval_id": 2,
+              "eval_name": "variant-recorder",
+              "passed": 4,
+              "failed": 4,
+              "total": 8,
+              "pass_rate": 0.5,
+              "timing_seconds": 208.1,
+              "total_tokens": 62161
+            }
+          ],
+          "summary": {
+            "total_passed": 20,
+            "total_failed": 4,
+            "total_assertions": 24,
+            "pass_rate": 0.833,
+            "avg_timing_seconds": 139.7,
+            "total_timing_seconds": 419.1,
+            "total_tokens": 194938
+          }
+        }
+      ]
+    }
+  ]
+}

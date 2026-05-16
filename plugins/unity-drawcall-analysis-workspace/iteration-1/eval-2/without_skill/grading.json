@@ -1,0 +1,63 @@
+{
+  "expectations": [
+    {
+      "text": "Uses ShaderUtil.GetShaderData to extract shader pass metadata",
+      "passed": true,
+      "evidence": "ShaderPassExtractor.cs line 90: `var shaderData = ShaderUtil.GetShaderData(shader);`"
+    },
+    {
+      "text": "Iterates through all subshaders and their passes, building a global passIndex across all subshaders",
+      "passed": true,
+      "evidence": "ShaderPassExtractor.cs lines 98-128: outer loop `for (int sub = 0; sub < shaderData.SubShaderCount; sub++)` and inner loop `for (int pass = 0; pass < subData.PassCount; pass++)` incrementing `globalPassIndex` at line 126 after each pass."
+    },
+    {
+      "text": "Extracts LightMode tag from each pass (via FindTagValue reflection or similar)",
+      "passed": true,
+      "evidence": "ShaderPassExtractor.cs line 122: `LightMode = passData.LightMode ?? string.Empty,` \u2014 uses the direct PassData.LightMode property."
+    },
+    {
+      "text": "Has keyword normalization: splits string, sorts, deduplicates",
+      "passed": true,
+      "evidence": "KeywordUtils.cs lines 28-29: `keywords.Split(...)` splits the string. Lines 44-46: `.Distinct(StringComparer.Ordinal)` deduplicates, `.OrderBy(k => k, StringComparer.Ordinal)` sorts."
+    },
+    {
+      "text": "Has FindByIndex method to look up pass metadata by global passIndex",
+      "passed": false,
+      "evidence": "No method named `FindByIndex` exists in any of the three output files. Global pass index matching is done inline via LINQ in VariantRecorder.MergeDrawCallsWithPassData (line 237: `.Where(p => p.GlobalPassIndex == drawCall.PassIndex)`) but not as a dedicated lookup method."
+    },
+    {
+      "text": "Has fallback matching (FindBestMatch) for when passIndex is unavailable: tries passName, then lightMode, then PassType",
+      "passed": false,
+      "evidence": "No method named `FindBestMatch` exists. The fallback strategy in VariantRecorder.MergeDrawCallsWithPassData (lines 228-239) tries local pass index first, then global pass index \u2014 it does not attempt matching by passName, lightMode, or PassType. When all matching fails (line 241), it creates a record with PassType=\"Unknown\" rather than guessing."
+    },
+    {
+      "text": "Uses composite key (shader + passIndex + passName + lightMode + keywords) for deduplication",
+      "passed": false,
+      "evidence": "ShaderVariantRecord.Equals (lines 108-113) uses only (ShaderPath, PassIndex, NormalizedKeywords) as its equality/comparison key. It does NOT include passName or lightMode in the deduplication composite key."
+    },
+    {
+      "text": "Has PassType guessing logic based on passName/lightMode (e.g. ShadowCaster, Meta, Deferred)",
+      "passed": false,
+      "evidence": "No PassType guessing logic exists. PassType is read directly from the API (`passData.PassType`, line 123) and stored as its string representation. When a pass is unmatched, PassType is hardcoded to \"Unknown\" (line 252). There is no logic that infers PassType from passName or LightMode."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 4,
+    "total": 8,
+    "pass_rate": 0.5
+  },
+  "timing": {
+    "executor_duration_seconds": 208.1
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [
+      "Add a dedicated FindByIndex method on ShaderPassExtractor (or similar) that looks up a ShaderPassInfo by globalPassIndex.",
+      "Add a FindBestMatch method with fallback chain: try passIndex, then passName, then LightMode, then PassType.",
+      "Expand the deduplication composite key in ShaderVariantRecord.Equals/GetHashCode to include PassName and LightMode.",
+      "Add PassType guessing logic that infers PassType from passName or LightMode conventions (e.g. \"ShadowCaster\" -> PassType.ShadowCaster, \"LightMode=Meta\" -> PassType.Meta)."
+    ],
+    "overall": "The code correctly uses ShaderUtil.GetShaderData and iterates subshader passes with a global pass index. Keyword normalization (split/sort/deduplicate) is properly implemented. However, it is missing several expected features: a dedicated FindByIndex lookup method, a FindBestMatch fallback chain, a fully composite deduplication key (passName and LightMode are excluded), and any PassType guessing logic from names or tags. Four of eight expectations pass."
+  }
+}

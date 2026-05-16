@@ -1,0 +1,62 @@
+{
+  "expectations": [
+    {
+      "text": "Uses ShaderUtil.GetShaderData to extract shader pass metadata",
+      "passed": true,
+      "evidence": "ShaderPassExtractor.cs line 70: 'shaderData = ShaderUtil.GetShaderData(shader);' \u2014 the extractor calls ShaderUtil.GetShaderData and then reads subShaderCount/GetSubShader/GetPass/passIndex/name/GetTag/type from the returned ShaderData object."
+    },
+    {
+      "text": "Iterates through all subshaders and their passes, building a global passIndex across all subshaders",
+      "passed": true,
+      "evidence": "ShaderPassExtractor.cs lines 87-144: outer loop 'for (int s = 0; s < subShaderCount; s++)' iterates subshaders, inner loop 'for (int p = 0; p < passCount; p++)' iterates passes. A 'globalIndex' counter (line 84) is incremented after each pass (line 143) and stored as 'globalPassIndex' in the output struct (line 137)."
+    },
+    {
+      "text": "Extracts LightMode tag from each pass (via FindTagValue reflection or similar)",
+      "passed": true,
+      "evidence": "ShaderPassExtractor.cs line 128: 'lightMode = pass.GetTag(\"LightMode\", false) ?? string.Empty;' \u2014 uses the PassData.GetTag API (the standard approach on ShaderData, functionally equivalent to FindTagValue reflection)."
+    },
+    {
+      "text": "Has keyword normalization: splits string, sorts, deduplicates",
+      "passed": true,
+      "evidence": "KeywordUtils.cs lines 31-42, NormalizeKeywords method: trims via '.Select(k => k?.Trim())' (line 37), filters empties via '.Where(k => k.Length > 0)' (line 38), deduplicates via '.Distinct(StringComparer.Ordinal)' (line 39), and sorts via '.OrderBy(k => k, StringComparer.Ordinal)' (line 40)."
+    },
+    {
+      "text": "Has FindByIndex method to look up pass metadata by global passIndex",
+      "passed": true,
+      "evidence": "ShaderPassExtractor.cs lines 162-172, BuildGlobalPassLookup method: builds a 'Dictionary<int, ShaderPassInfo>' keyed by 'pass.globalPassIndex'. Consumed in VariantRecorder.cs line 409: 'var globalLookup = ShaderPassExtractor.BuildGlobalPassLookup(shader); if (globalLookup.TryGetValue(passIndex, out var globalInfo))'. Provides equivalent lookup capability."
+    },
+    {
+      "text": "Has fallback matching (FindBestMatch) for when passIndex is unavailable: tries passName, then lightMode, then PassType",
+      "passed": false,
+      "evidence": "VariantRecorder.cs lines 392-423, ResolvePass method: fallback order is (1) local passIndex lookup (line 405), (2) global passIndex lookup (line 409), (3) return a stub with default values (line 414-422). There is NO fallback that tries passName, lightMode, or PassType matching as specified in the expectation."
+    },
+    {
+      "text": "Uses composite key (shader + passIndex + passName + lightMode + keywords) for deduplication",
+      "passed": false,
+      "evidence": "VariantRecorder.cs line 435 calls 'KeywordUtils.GetVariantKey(v.shaderName, v.passIndex, v.keywords)' which produces a key of only 'shaderName|passIndex|kw1,kw2,...' (KeywordUtils.cs lines 68-77). The key does NOT include passName or lightMode as required by the expectation."
+    },
+    {
+      "text": "Has PassType guessing logic based on passName/lightMode (e.g. ShadowCaster, Meta, Deferred)",
+      "passed": false,
+      "evidence": "No PassType guessing/heuristic logic is present anywhere in the three output files. ShaderPassExtractor.cs line 131 reads the actual 'pass.type' directly from the API. VariantRecorder.cs line 422 returns 'PassType.Normal' as a hardcoded default in the stub path. There is no code that maps passName or lightMode strings (e.g. 'ShadowCaster', 'Meta', 'Deferred') to a guessed PassType."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 3,
+    "total": 8,
+    "pass_rate": 0.625
+  },
+  "timing": {
+    "executor_duration_seconds": 401
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [
+      "Add passName and lightMode to the deduplication composite key in GetVariantKey/DeduplicateAndSort",
+      "Implement a true fallback chain in ResolvePass that tries matching by passName, then lightMode, then PassType when direct passIndex lookup fails",
+      "Add PassType guessing/heuristic logic that maps common LightMode values (ShadowCaster, Meta, Deferred, DepthOnly, etc.) to their corresponding PassType enum values"
+    ],
+    "overall": "The core extraction pipeline (ShaderUtil.GetShaderData, subshader/pass iteration, LightMode tag extraction, keyword normalization, global pass index lookup) is solid and fully implemented. However, three expectations around fallback matching, composite deduplication key completeness, and PassType guessing logic are not met. These represent gaps in the variant deduplication and robustness story that would be needed for a production-grade tool."
+  }
+}

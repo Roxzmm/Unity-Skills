@@ -4,14 +4,16 @@
     "name": "Roxzmm"
   },
   "metadata": {
-    "description": "A collection of Claude Code skills for Unity game development: draw-call analysis, shader variant collection, and more.",
+    "description": "A collection of skills for Unity game development: draw-call analysis, shader variant collection, and more.",
+    "description_zh": "Unity 游戏开发的 Claude Code 技能合集：渲染指令分析、Shader 变体收集等。",
     "version": "1.0.0"
   },
   "plugins": [
     {
-      "name": "unity-drawcall-analysis",
-      "source": "./plugins/unity-drawcall-analysis",
+      "name": "unity-render-event-analysis",
+      "source": "./plugins/unity-render-event-analysis",
       "description": "Analyze Unity Editor per-frame draw-call data. Capture shader/pass/keyword info, extract pass metadata via ShaderUtil.GetShaderData, build custom shader variant collectors. Uses FrameDebugger reflection — no InternalAPIEditorBridge needed.",
+      "description_zh": "分析 Unity Editor 逐帧渲染指令数据。捕获 shader/pass/keyword 信息，通过 ShaderUtil.GetShaderData 提取 pass 元数据，构建自定义 shader variant 收集器。使用反射访问 FrameDebugger，无需 InternalAPIEditorBridge。",
       "version": "1.0.0"
     }
   ]
