@@ -1,0 +1,32 @@
+{
+  "eval_id": 1,
+  "eval_name": "capture-test-script",
+  "prompt": "写一个 Unity Editor 测试脚本。功能：点击菜单 'Tools/Frame Debugger/Capture All Events' 后，启动 FrameDebugger，逐帧遍历当前所有 drawcall 事件，提取每个事件的 shaderName、passName、lightMode、passIndex、shaderKeywords，输出到 CSV 文件保存到 Assets/FrameDebuggerOutput/events.csv。使用 FrameDebuggerReflect 工具类。",
+  "assertions": [
+    {
+      "name": "menuitem-tools-capture",
+      "text": "Has [MenuItem(\"Tools/Frame Debugger/Capture All Events\")] entry point",
+      "expected": true
+    },
+    {
+      "name": "editor-update-state-machine",
+      "text": "Uses EditorApplication.update as the tick mechanism with a state machine (Phase 1: wait for events, Phase 2: iterate with limit, Phase 3: cleanup)",
+      "expected": true
+    },
+    {
+      "name": "per-event-limit",
+      "text": "Sets limit per event (limit = targetIndex + 1) and waits one frame before reading GetFrameEventData",
+      "expected": true
+    },
+    {
+      "name": "csv-output",
+      "text": "Outputs CSV with proper RFC 4180 escaping (quotes fields containing commas, newlines, or double-quotes)",
+      "expected": true
+    },
+    {
+      "name": "cleanup-on-done",
+      "text": "Removes EditorApplication.update handler and disables FrameDebugger when capture completes",
+      "expected": true
+    }
+  ]
+}

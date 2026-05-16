@@ -15,8 +15,7 @@ Analyze per-frame Unity Editor draw-call data via FrameDebugger reflection.
 
 ```
 skills/unity-render-event-analysis/
-├── SKILL.md              # Skill instructions (English)
-├── SKILL_CN.md           # Skill instructions (Chinese)
+├── SKILL.md              # Skill instructions
 ├── references/
 │   ├── reflection-wrapper.md   # FrameDebuggerReflect template
 │   ├── capture-loop.md         # Capture loop test script

@@ -1,0 +1,27 @@
+{
+  "eval_id": 0,
+  "eval_name": "reflection-wrapper",
+  "prompt": "帮我写一个 FrameDebuggerUtility 的反射封装类，不依赖 InternalAPIEditorBridge。需要包含：启用/禁用 FrameDebugger、获取帧事件数量、遍历每个事件提取 shader/pass/keyword 信息。使用 Delegate.CreateDelegate 做性能优化。",
+  "assertions": [
+    {
+      "name": "uses-delegate-create-delegate",
+      "text": "Uses Delegate.CreateDelegate for static method/property access (not MethodInfo.Invoke for simple getters)",
+      "expected": true
+    },
+    {
+      "name": "get-frame-events-async",
+      "text": "Has async capture via EditorApplication.update state machine or StartCapture-style method",
+      "expected": true
+    },
+    {
+      "name": "extracts-shader-pass-keywords",
+      "text": "Extracts shader info (name/instanceID), pass info (index/name/lightMode), and shader keywords from FrameDebuggerEventData via reflection field access",
+      "expected": true
+    },
+    {
+      "name": "null-check-delegates",
+      "text": "Null-checks all delegates before invocation; logs once and degrades gracefully on reflection failure",
+      "expected": true
+    }
+  ]
+}

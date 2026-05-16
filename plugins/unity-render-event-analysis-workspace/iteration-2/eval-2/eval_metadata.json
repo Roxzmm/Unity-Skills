@@ -1,0 +1,47 @@
+{
+  "eval_id": 2,
+  "eval_name": "variant-recorder",
+  "prompt": "我需要把 FrameDebugger 捕获的 drawcall 信息和 ShaderUtil.GetShaderData 的 pass 元数据合并，生成一个带精确 passIndex 的 shader variant collection。功能：1) 用 ShaderUtil.GetShaderData 提取每个 shader 的所有 pass 信息（subShaderIndex, localPassIndex, passName, lightMode, PassType）；2) 对于 FrameDebugger 捕获的每个 drawcall，根据 passIndex 匹配到具体 pass；3) 按 (shader, passIndex, keywords) 去重并排序。",
+  "assertions": [
+    {
+      "name": "uses-shader-util-get-shader-data",
+      "text": "Uses ShaderUtil.GetShaderData to extract shader pass metadata",
+      "expected": true
+    },
+    {
+      "name": "iterates-subshader-passes",
+      "text": "Iterates through all subshaders and their passes, building a global passIndex across all subshaders",
+      "expected": true
+    },
+    {
+      "name": "extracts-lightmode",
+      "text": "Extracts LightMode tag from each pass (via FindTagValue reflection or similar)",
+      "expected": true
+    },
+    {
+      "name": "pass-type-guessing",
+      "text": "Has PassType guessing logic based on passName/lightMode (e.g. ShadowCaster, Meta, Deferred)",
+      "expected": true
+    },
+    {
+      "name": "find-by-pass-index",
+      "text": "Has FindByIndex method to look up pass metadata by global passIndex",
+      "expected": true
+    },
+    {
+      "name": "find-best-match-fallback",
+      "text": "Has fallback matching (FindBestMatch) with priority chain: passName → lightMode → PassType",
+      "expected": true
+    },
+    {
+      "name": "keyword-normalization",
+      "text": "Has keyword normalization: splits string, sorts, deduplicates",
+      "expected": true
+    },
+    {
+      "name": "composite-dedup-key",
+      "text": "Uses composite key including passIndex AND passName/lightMode for deduplication (not just shader+passType+keywords)",
+      "expected": true
+    }
+  ]
+}

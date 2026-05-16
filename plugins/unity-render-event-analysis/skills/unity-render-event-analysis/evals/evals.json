@@ -6,21 +6,112 @@
       "name": "reflection-wrapper",
       "prompt": "帮我写一个 FrameDebuggerUtility 的反射封装类，不依赖 InternalAPIEditorBridge。需要包含：启用/禁用 FrameDebugger、获取帧事件数量、遍历每个事件提取 shader/pass/keyword 信息。使用 Delegate.CreateDelegate 做性能优化。",
       "expected_output": "生成一个完整的 FrameDebuggerReflect.cs 静态类，包含反射初始化、所有必需的方法/属性委托、事件数据字段访问器、以及异步 StartCapture 方法",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "name": "uses-delegate-create-delegate",
+          "text": "Uses Delegate.CreateDelegate for static method/property access (not MethodInfo.Invoke for simple getters)",
+          "expected": true
+        },
+        {
+          "name": "get-frame-events-async",
+          "text": "Has async capture via EditorApplication.update state machine or StartCapture-style method",
+          "expected": true
+        },
+        {
+          "name": "extracts-shader-pass-keywords",
+          "text": "Extracts shader info (name/instanceID), pass info (index/name/lightMode), and shader keywords from FrameDebuggerEventData via reflection field access",
+          "expected": true
+        },
+        {
+          "name": "null-check-delegates",
+          "text": "Null-checks all delegates before invocation; logs once and degrades gracefully on reflection failure",
+          "expected": true
+        }
+      ]
     },
     {
       "id": 1,
       "name": "capture-test-script",
       "prompt": "写一个 Unity Editor 测试脚本。功能：点击菜单 'Tools/Frame Debugger/Capture All Events' 后，启动 FrameDebugger，逐帧遍历当前所有 drawcall 事件，提取每个事件的 shaderName、passName、lightMode、passIndex、shaderKeywords，输出到 CSV 文件保存到 Assets/FrameDebuggerOutput/events.csv。使用 FrameDebuggerReflect 工具类。",
       "expected_output": "生成一个 FrameDebuggerCaptureTest.cs 静态类，包含 EditorApplication.update 驱动的捕获循环、CSV 输出、正确的事件遍历逻辑",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "name": "menuitem-tools-capture",
+          "text": "Has [MenuItem(\"Tools/Frame Debugger/Capture All Events\")] entry point",
+          "expected": true
+        },
+        {
+          "name": "editor-update-state-machine",
+          "text": "Uses EditorApplication.update as the tick mechanism with a state machine (Phase 1: wait for events, Phase 2: iterate with limit, Phase 3: cleanup)",
+          "expected": true
+        },
+        {
+          "name": "per-event-limit",
+          "text": "Sets limit per event (limit = targetIndex + 1) and waits one frame before reading GetFrameEventData",
+          "expected": true
+        },
+        {
+          "name": "csv-output",
+          "text": "Outputs CSV with proper RFC 4180 escaping (quotes fields containing commas, newlines, or double-quotes)",
+          "expected": true
+        },
+        {
+          "name": "cleanup-on-done",
+          "text": "Removes EditorApplication.update handler and disables FrameDebugger when capture completes",
+          "expected": true
+        }
+      ]
     },
     {
       "id": 2,
       "name": "variant-recorder",
       "prompt": "我需要把 FrameDebugger 捕获的 drawcall 信息和 ShaderUtil.GetShaderData 的 pass 元数据合并，生成一个带精确 passIndex 的 shader variant collection。功能：1) 用 ShaderUtil.GetShaderData 提取每个 shader 的所有 pass 信息（subShaderIndex, localPassIndex, passName, lightMode, PassType）；2) 对于 FrameDebugger 捕获的每个 drawcall，根据 passIndex 匹配到具体 pass；3) 按 (shader, passIndex, keywords) 去重并排序。",
       "expected_output": "生成多个文件：ShaderPassExtractor.cs（pass 元数据提取）、KeywordUtils.cs（关键词归一化）、VariantRecorder.cs（合并逻辑）",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "name": "uses-shader-util-get-shader-data",
+          "text": "Uses ShaderUtil.GetShaderData to extract shader pass metadata",
+          "expected": true
+        },
+        {
+          "name": "iterates-subshader-passes",
+          "text": "Iterates through all subshaders and their passes, building a global passIndex across all subshaders",
+          "expected": true
+        },
+        {
+          "name": "extracts-lightmode",
+          "text": "Extracts LightMode tag from each pass (via FindTagValue reflection or similar)",
+          "expected": true
+        },
+        {
+          "name": "pass-type-guessing",
+          "text": "Has PassType guessing logic based on passName/lightMode (e.g. ShadowCaster, Meta, Deferred)",
+          "expected": true
+        },
+        {
+          "name": "find-by-pass-index",
+          "text": "Has FindByIndex method to look up pass metadata by global passIndex",
+          "expected": true
+        },
+        {
+          "name": "find-best-match-fallback",
+          "text": "Has fallback matching (FindBestMatch) with priority chain: passName → lightMode → PassType",
+          "expected": true
+        },
+        {
+          "name": "keyword-normalization",
+          "text": "Has keyword normalization: splits string, sorts, deduplicates",
+          "expected": true
+        },
+        {
+          "name": "composite-dedup-key",
+          "text": "Uses composite key including passIndex AND passName/lightMode for deduplication (not just shader+passType+keywords)",
+          "expected": true
+        }
+      ]
     }
   ]
 }
