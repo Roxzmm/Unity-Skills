@@ -1,0 +1,29 @@
+{
+  "run_id": "eval-0-with_skill",
+  "assertions": [
+    {
+      "name": "uses-delegate-create-delegate",
+      "text": "Uses Delegate.CreateDelegate for static method/property access (not MethodInfo.Invoke for simple getters)",
+      "passed": true,
+      "evidence": "SetEnabled (line 110), GetRemotePlayerGUID (line 111), GetFrameEvents (line 113), GetFrameEventInfoName (line 115), GetFrameEventObject (line 117), count (line 121), limit get (line 122) and limit set (line 123) all use Delegate.CreateDelegate via helper methods CreateStaticDelegate/CreatePropertyGetter/CreatePropertySetter. GetFrameEventData (line 259) uses MethodInfo.Invoke, which the assertion explicitly allows."
+    },
+    {
+      "name": "has-async-capture",
+      "text": "Has async capture via EditorApplication.update state machine or StartCapture-style method",
+      "passed": true,
+      "evidence": "StartCapture method (line 327-398) registers EditorApplication.update += Tick (line 397) and uses a local function Tick as a state machine with three phases: wait for events, capture current event, advance/complete. On completion it removes the handler (line 388)."
+    },
+    {
+      "name": "extracts-shader-pass-keyword-info",
+      "text": "Extracts shader info (name/instanceID), pass info (index/name/lightMode), and shader keywords from FrameDebuggerEventData via reflection field access",
+      "passed": true,
+      "evidence": "Reads m_OriginalShaderName (line 132), m_ShaderInstanceID (line 136), m_ShaderPassIndex (line 137), m_PassName (line 134), m_PassLightMode (line 135), and shaderKeywords (line 138) via GetField. Extractors GetOriginalShaderName (line 276), GetShaderInstanceID (line 288), GetShaderPassIndex (line 291), GetPassName (line 282), GetPassLightMode (line 285), GetShaderKeywords (line 294) provide access. Used in CaptureSingleEvent (lines 493-498)."
+    },
+    {
+      "name": "null-checks-delegates",
+      "text": "Null-checks all delegates before invocation; logs once and degrades gracefully on reflection failure",
+      "passed": true,
+      "evidence": "Null-conditional/cop coalescing on every delegate/property call: _setEnabled?.Invoke (line 169), _getRemoteGUID != null (line 191), _getCount != null (line 202), _getFrameEvents?.Invoke (line 210), _getLimit != null (line 220), if (_setLimit != null) (line 228), _getEventInfoName != null (line 238), _getEventObject?.Invoke (line 242), _miGetFrameEventData == null guard (line 257), all field extractors use ?.GetValue (lines 277-313). Init errors log Debug.LogError/Debug.LogWarning (lines 94-97, 100-103, 148-151, 527-528, 536-538, 552-553, 568-570). Activator.CreateInstance in a try-catch returning null on failure (line 268)."
+    }
+  ]
+}

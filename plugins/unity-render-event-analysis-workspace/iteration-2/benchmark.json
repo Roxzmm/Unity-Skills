@@ -1,0 +1,87 @@
+{
+  "name": "unity-render-event-analysis",
+  "iteration": 2,
+  "previous_iteration": 1,
+  "configs": [
+    {
+      "name": "with_skill",
+      "label": "With Skill",
+      "pass_rate": 1.0,
+      "pass_count": 17,
+      "total_assertions": 17,
+      "avg_duration_seconds": 88.8,
+      "avg_tokens": 67599.7,
+      "stddev_duration": 14.6,
+      "stddev_tokens": 4746.9,
+      "per_eval": [
+        {
+          "eval_id": 0,
+          "eval_name": "reflection-wrapper",
+          "pass_rate": 1.0,
+          "pass_count": 4,
+          "total_assertions": 4,
+          "duration_seconds": 80.2,
+          "tokens": 62078
+        },
+        {
+          "eval_id": 1,
+          "eval_name": "capture-test-script",
+          "pass_rate": 1.0,
+          "pass_count": 5,
+          "total_assertions": 5,
+          "duration_seconds": 105.4,
+          "tokens": 71126
+        },
+        {
+          "eval_id": 2,
+          "eval_name": "variant-recorder",
+          "pass_rate": 1.0,
+          "pass_count": 8,
+          "total_assertions": 8,
+          "duration_seconds": 80.7,
+          "tokens": 69595
+        }
+      ]
+    },
+    {
+      "name": "without_skill",
+      "label": "Without Skill (Baseline)",
+      "pass_rate": 0.882,
+      "pass_count": 15,
+      "total_assertions": 17,
+      "avg_duration_seconds": 158.9,
+      "avg_tokens": 66652.3,
+      "stddev_duration": 16.9,
+      "stddev_tokens": 9135.8,
+      "per_eval": [
+        {
+          "eval_id": 0,
+          "eval_name": "reflection-wrapper",
+          "pass_rate": 1.0,
+          "pass_count": 4,
+          "total_assertions": 4,
+          "duration_seconds": 139.0,
+          "tokens": 62056
+        },
+        {
+          "eval_id": 1,
+          "eval_name": "capture-test-script",
+          "pass_rate": 0.6,
+          "pass_count": 3,
+          "total_assertions": 5,
+          "duration_seconds": 170.7,
+          "tokens": 60193
+        },
+        {
+          "eval_id": 2,
+          "eval_name": "variant-recorder",
+          "pass_rate": 1.0,
+          "pass_count": 8,
+          "total_assertions": 8,
+          "duration_seconds": 167.0,
+          "tokens": 77708
+        }
+      ]
+    }
+  ]
+}

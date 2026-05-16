@@ -1,0 +1,53 @@
+{
+  "run_id": "eval-2-with_skill",
+  "assertions": [
+    {
+      "name": "Uses ShaderUtil.GetShaderData",
+      "text": "Uses ShaderUtil.GetShaderData to extract shader pass metadata",
+      "passed": true,
+      "evidence": "ShaderPassExtractor.cs line 29: `ShaderData shaderData = ShaderUtil.GetShaderData(shader);` — directly calls the public Editor API."
+    },
+    {
+      "name": "Iterates subshaders and passes with global passIndex",
+      "text": "Iterates through all subshaders and their passes, building a global passIndex across all subshaders",
+      "passed": true,
+      "evidence": "ShaderPassExtractor.cs lines 32-52: nested loop `for (int sub = 0; sub < shaderData.SubshaderCount; sub++)` / `for (int local = 0; local < subShader.PassCount; local++)` with `passIndex++` at line 51 tracking the global index."
+    },
+    {
+      "name": "Extracts LightMode tag via FindTagValue reflection",
+      "text": "Extracts LightMode tag from each pass (via FindTagValue reflection or similar)",
+      "passed": true,
+      "evidence": "ShaderPassExtractor.cs lines 112-124: `GetLightModeTag` method uses `pass.GetType().GetMethod(\"FindTagValue\")` then invokes it with `new ShaderTagId(\"LightMode\")`. Called on line 38."
+    },
+    {
+      "name": "PassType guessing logic handles ShadowCaster/Meta/Deferred",
+      "text": "Has PassType guessing logic based on passName/lightMode (e.g. ShadowCaster, Meta, Deferred)",
+      "passed": true,
+      "evidence": "ShaderPassExtractor.cs lines 131-151: `GuessPassType` method checks for `ShadowCaster`/`Caster` (line 136-138), `Meta` (line 139-140), `Deferred` (line 141-142), plus ForwardBase, ForwardAdd, MotionVectors."
+    },
+    {
+      "name": "Has FindByIndex method",
+      "text": "Has FindByIndex method to look up pass metadata by global passIndex",
+      "passed": true,
+      "evidence": "ShaderPassExtractor.cs lines 67-73: `public static ShaderPassInfo FindByIndex(Shader shader, int passIndex)` iterates extracted passes and returns the one matching `passIndex`."
+    },
+    {
+      "name": "Has FindBestMatch with priority chain: passName -> lightMode -> PassType",
+      "text": "Has fallback matching (FindBestMatch) with priority chain: passName → lightMode → PassType",
+      "passed": true,
+      "evidence": "ShaderPassExtractor.cs lines 79-104: `FindBestMatch` implements three-step fallback: 1) exact passName match (lines 85-89), 2) lightMode match (lines 92-96), 3) fallback to PassType (lines 99-101)."
+    },
+    {
+      "name": "Keyword normalization splits, sorts, deduplicates",
+      "text": "Has keyword normalization: splits string, sorts, deduplicates",
+      "passed": true,
+      "evidence": "KeywordUtils.cs lines 38-46: `Normalize(string)` splits by whitespace/semicolon/comma. Lines 21-32: `Normalize(IEnumerable<string>)` trims, deduplicates via HashSet, then sorts via `result.Sort(StringComparer.Ordinal)`."
+    },
+    {
+      "name": "Composite dedup key includes passIndex AND passName/lightMode",
+      "text": "Uses composite key including passIndex AND passName/lightMode for deduplication (not just shader+passType+keywords)",
+      "passed": true,
+      "evidence": "VariantRecorder.cs lines 75-81: `DedupKey` property returns `$\"{shaderName}|{passIndex}|{kwKey}|{passName}|{lightMode}\"` — includes shaderName, passIndex, keywords, passName, AND lightMode."
+    }
+  ]
+}

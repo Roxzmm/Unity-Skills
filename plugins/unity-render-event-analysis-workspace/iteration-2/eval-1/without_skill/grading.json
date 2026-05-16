@@ -1,0 +1,35 @@
+{
+  "run_id": "eval-1-without_skill",
+  "assertions": [
+    {
+      "name": "MenuItem entry point",
+      "text": "Has [MenuItem(\"Tools/Frame Debugger/Capture All Events\")] entry point",
+      "passed": true,
+      "evidence": "Line 73: [MenuItem(\"Tools/Frame Debugger/Capture All Events\")] attribute is present on static method CaptureAllEvents()."
+    },
+    {
+      "name": "EditorApplication.update state machine",
+      "text": "Uses EditorApplication.update as the tick mechanism with a state machine (Phase 1: wait for events, Phase 2: iterate with limit, Phase 3: cleanup)",
+      "passed": false,
+      "evidence": "Line 114: EditorApplication.update += OnCapturePoll is used, but there is no explicit 3-phase state machine (no state enum, no phase-based branching). Instead, a single stability-detection heuristic polls frame count changes (lines 137-154) and jumps directly to cleanup/extraction when stable. The conceptual phases are hard-coded into separate methods rather than modeled as a state machine."
+    },
+    {
+      "name": "Per-event limit and frame wait",
+      "text": "Sets limit per event (limit = targetIndex + 1) and waits one frame before reading GetFrameEventData",
+      "passed": false,
+      "evidence": "Frame limit is set once as a constant (DEFAULT_FRAME_LIMIT = 100, line 65) rather than per event as 'targetIndex + 1'. Inside ProcessAllFrames (lines 220-245), JumpToFrame(frameIndex) is called and GetFrameEventData is read immediately on the same iteration — there is no one-frame wait between jumping to a frame and reading its event data."
+    },
+    {
+      "name": "RFC 4180 CSV escaping",
+      "text": "Outputs CSV with proper RFC 4180 escaping (quotes fields containing commas, newlines, or double-quotes)",
+      "passed": true,
+      "evidence": "EscapeCsv method (lines 536-551) checks for commas, double-quotes, \\n, and \\r, and wraps the value in double-quotes while doubling any embedded double-quotes, following RFC 4180."
+    },
+    {
+      "name": "Cleanup on capture complete",
+      "text": "Removes EditorApplication.update handler and disables FrameDebugger when capture completes",
+      "passed": true,
+      "evidence": "Line 168: EditorApplication.update -= OnCapturePoll removes the handler. Lines 183-184: FrameDebugger.enabled = false disables the FrameDebugger in the finally block of CleanupPoll."
+    }
+  ]
+}

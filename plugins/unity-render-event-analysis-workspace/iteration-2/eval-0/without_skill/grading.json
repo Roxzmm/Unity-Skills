@@ -1,0 +1,29 @@
+{
+  "run_id": "eval-0-without_skill",
+  "assertions": [
+    {
+      "name": "uses-delegate-create-delegate",
+      "text": "Uses Delegate.CreateDelegate for static method/property access (not MethodInfo.Invoke for simple getters)",
+      "passed": true,
+      "evidence": "SetEnabled, GetRemotePlayerGUID, GetFrameEvents, GetFrameEventInfoName, GetFrameEventObject all use CreateStaticDel which calls Delegate.CreateDelegate (lines 458-462). count, limit use CreatePropGet/CreatePropSet also backed by Delegate.CreateDelegate (lines 465-467). GetFrameEventData uses MethodInfo.Invoke (line 472-474), which is explicitly allowed by the assertion."
+    },
+    {
+      "name": "has-async-capture",
+      "text": "Has async capture via EditorApplication.update state machine or StartCapture-style method",
+      "passed": true,
+      "evidence": "CaptureAllEvents (line 303) uses EditorApplication.update += Tick (line 350) with a local function state machine that walks through events frame by frame, and EditorApplication.update -= Tick (line 341) on completion."
+    },
+    {
+      "name": "extracts-shader-pass-keyword-info",
+      "text": "Extracts shader info (name/instanceID), pass info (index/name/lightMode), and shader keywords from FrameDebuggerEventData via reflection field access",
+      "passed": true,
+      "evidence": "Reflection reads fields m_OriginalShaderName (line 478), m_ShaderInstanceID (line 481), m_ShaderPassIndex (line 482), m_PassName (line 479), m_PassLightMode (line 480), and shaderKeywords (line 483) on FrameDebuggerEventData. Corresponding accessor methods at lines 233-254 return these values with null-safe defaults."
+    },
+    {
+      "name": "null-checks-delegates-and-logs-init-errors",
+      "text": "Null-checks all delegates before invocation; logs once and degrades gracefully on reflection failure",
+      "passed": true,
+      "evidence": "All delegate invocations use null-conditional operator (?.) or explicit null checks before calling (lines 107, 132, 145, 159, 164, 200, 208, 215, 225, 233-258). Init errors are caught in a try/catch (line 493) and logged via Debug.LogError. Missing methods during CreateStaticDel log a Debug.LogWarning (line 520) and return null, allowing graceful degradation."
+    }
+  ]
+}

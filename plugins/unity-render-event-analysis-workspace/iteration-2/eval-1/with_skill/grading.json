@@ -1,0 +1,35 @@
+{
+  "run_id": "eval-1-with_skill",
+  "assertions": [
+    {
+      "name": "MenuItem entry point",
+      "text": "Has [MenuItem(\"Tools/Frame Debugger/Capture All Events\")] entry point",
+      "passed": true,
+      "evidence": "Line 42: [MenuItem(\"Tools/Frame Debugger/Capture All Events\")] attribute is present on StartCapture() method."
+    },
+    {
+      "name": "EditorApplication.update state machine with 3 phases",
+      "text": "Uses EditorApplication.update as the tick mechanism with a state machine (Phase 1: wait for events, Phase 2: iterate with limit, Phase 3: cleanup)",
+      "passed": true,
+      "evidence": "Line 65 adds CaptureTick to EditorApplication.update. Phase 1 (lines 77-99): waits for _csv == null and _eventCount > 0. Phase 2 (lines 102-135): captures event at limit-1, advances target, sets new limit. Phase 3 (lines 128-131): calls FinishCapture when targetIndex >= eventCount."
+    },
+    {
+      "name": "Limit per event with frame wait",
+      "text": "Sets limit per event (limit = targetIndex + 1) and waits one frame before reading GetFrameEventData",
+      "passed": true,
+      "evidence": "Line 98 sets SetLimit(1) then returns, effectively waiting for next EditorApplication.update tick. Line 135 sets SetLimit(_targetEventIndex + 1). Lines 105-108 call GetFrameEventData on the subsequent tick after the limit was set."
+    },
+    {
+      "name": "RFC 4180 CSV escaping",
+      "text": "Outputs CSV with proper RFC 4180 escaping (quotes fields containing commas, newlines, or double-quotes)",
+      "passed": true,
+      "evidence": "Escape() method (lines 180-188) checks for commas, double-quotes, newlines, carriage returns. Wraps value in double-quotes and doubles internal quotes when any delimiter character is found, matching RFC 4180."
+    },
+    {
+      "name": "Cleanup on completion",
+      "text": "Removes EditorApplication.update handler and disables FrameDebugger when capture completes",
+      "passed": true,
+      "evidence": "FinishCapture() (lines 142-170): line 145 calls EditorApplication.update -= CaptureTick to remove the handler, and line 148 calls FrameDebuggerReflect.SetEnabled(false, ...) to disable the FrameDebugger."
+    }
+  ]
+}
