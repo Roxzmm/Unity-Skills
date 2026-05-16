@@ -14,15 +14,16 @@ Analyze per-frame Unity Editor draw-call data via FrameDebugger reflection.
 ## Files
 
 ```
-skills/unity-render-event-analysis/
 ├── SKILL.md              # Skill instructions
 ├── references/
 │   ├── reflection-wrapper.md   # FrameDebuggerReflect template
 │   ├── capture-loop.md         # Capture loop test script
 │   ├── shader-metadata.md      # ShaderUtil.GetShaderData pass extraction
 │   └── recorder.md             # Combined variant recorder pattern
-└── evals/
-    └── evals.json              # Test cases
+├── evals/
+│   └── evals.json              # Test cases
+└── .claude-plugin/
+    └── plugin.json             # Plugin manifest
 ```
 
 ## Chinese Version / 中文版本
