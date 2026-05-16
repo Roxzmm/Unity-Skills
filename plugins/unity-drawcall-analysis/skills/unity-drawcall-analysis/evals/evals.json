@@ -1,0 +1,26 @@
+{
+  "skill_name": "unity-drawcall-analysis",
+  "evals": [
+    {
+      "id": 0,
+      "name": "reflection-wrapper",
+      "prompt": "帮我写一个 FrameDebuggerUtility 的反射封装类，不依赖 InternalAPIEditorBridge。需要包含：启用/禁用 FrameDebugger、获取帧事件数量、遍历每个事件提取 shader/pass/keyword 信息。使用 Delegate.CreateDelegate 做性能优化。",
+      "expected_output": "生成一个完整的 FrameDebuggerReflect.cs 静态类，包含反射初始化、所有必需的方法/属性委托、事件数据字段访问器、以及异步 StartCapture 方法",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "capture-test-script",
+      "prompt": "写一个 Unity Editor 测试脚本。功能：点击菜单 'Tools/Frame Debugger/Capture All Events' 后，启动 FrameDebugger，逐帧遍历当前所有 drawcall 事件，提取每个事件的 shaderName、passName、lightMode、passIndex、shaderKeywords，输出到 CSV 文件保存到 Assets/FrameDebuggerOutput/events.csv。使用 FrameDebuggerReflect 工具类。",
+      "expected_output": "生成一个 FrameDebuggerCaptureTest.cs 静态类，包含 EditorApplication.update 驱动的捕获循环、CSV 输出、正确的事件遍历逻辑",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "variant-recorder",
+      "prompt": "我需要把 FrameDebugger 捕获的 drawcall 信息和 ShaderUtil.GetShaderData 的 pass 元数据合并，生成一个带精确 passIndex 的 shader variant collection。功能：1) 用 ShaderUtil.GetShaderData 提取每个 shader 的所有 pass 信息（subShaderIndex, localPassIndex, passName, lightMode, PassType）；2) 对于 FrameDebugger 捕获的每个 drawcall，根据 passIndex 匹配到具体 pass；3) 按 (shader, passIndex, keywords) 去重并排序。",
+      "expected_output": "生成多个文件：ShaderPassExtractor.cs（pass 元数据提取）、KeywordUtils.cs（关键词归一化）、VariantRecorder.cs（合并逻辑）",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "unity-drawcall-analysis",
+  "description": "Analyze Unity Editor per-frame draw-call data: capture shader/pass/keyword info, extract pass metadata via ShaderUtil.GetShaderData, build custom shader variant collectors without InternalAPIEditorBridge dependency",
+  "version": "1.0.0",
+  "author": {
+    "name": "Roxzmm"
+  },
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/Roxzmm/Unity-Skills"
+  }
+}
